@@ -14,7 +14,7 @@ class Lucette:
         self.__broker = broker
         self.__subscriber_registry = defaultdict(list)
 
-    def subscriber(self, func: Callable):
+    def subscribe(self, func: Callable):
         update_wrapper(self, func)
         arg_details = getfullargspec(func)
         if len(arg_details.args) == 0:
@@ -36,4 +36,4 @@ class Lucette:
                 await func(message)
 
 
-asyncio.get_event_loop().create_task(__listen_for_events())
+#asyncio.get_event_loop().create_task(__listen_for_events())

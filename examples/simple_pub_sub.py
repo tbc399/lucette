@@ -8,7 +8,7 @@ from lucette import Lucette
 lucy = Lucette()
 
 
-@lucy.subscriber
+@lucy.subscribe
 async def my_handler(event: MyEvent) -> None:
     pass
 

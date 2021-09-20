@@ -1,3 +1,1 @@
-# laurina
-
-laurina is 
+Lightweight asynchronous message passing 
