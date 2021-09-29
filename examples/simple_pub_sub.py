@@ -2,6 +2,7 @@ import uvloop
 import asyncio
 
 from lucette import Lucette
+from lucette.message import BaseMessage
 
 
 # defaults to SimpleBroker if nothing is provided
@@ -9,13 +10,14 @@ lucy = Lucette()
 
 
 @lucy.subscribe
-async def my_handler(event: MyEvent) -> None:
+async def my_handler(message: MyMessage) -> None:
     pass
 
 
-def main():
+async def main():
     await lucy.publish()
 
 
 uvloop.install()
-asyncio.run(main())
+asyncio.run(lucy.run())
+asyncio.

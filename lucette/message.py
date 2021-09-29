@@ -2,14 +2,28 @@ import datetime
 import pydantic
 import uuid
 
-from typing import UUI
+import inflection
+
+from typing import Optional
 
 
 class BaseMessage(pydantic.BaseModel):
     """
     todo
     """
-    channel: str
+    _channel: Optional[str]
+    
+    def __init__(self, **data):
+        """
+        Create a new BaseMessage. Here channel is used as a way to explicitly
+        specify the name of the channel within the message broker that this
+        message type is sent on.
+        """
+        super().__init__(**data)
+        
+    @property
+    def channel(self):
+        return self._channel or inflection.underscore(self.__class__.__name__)
 
 
 class OrderedMessage(BaseMessage):
