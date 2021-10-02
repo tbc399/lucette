@@ -21,9 +21,10 @@ class BaseMessage(pydantic.BaseModel):
         """
         super().__init__(**data)
         
+    @classmethod
     @property
-    def channel(self):
-        return self._channel or inflection.underscore(self.__class__.__name__)
+    def channel(cls):
+        return cls._channel or inflection.underscore(cls.__name__)
 
 
 class OrderedMessage(BaseMessage):
