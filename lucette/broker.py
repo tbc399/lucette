@@ -1,6 +1,8 @@
 import asyncio
 import abc
 
+from typing import Tuple
+
 import aioredis
 
 from .message import BaseMessage
@@ -35,11 +37,11 @@ class SimpleBroker(MessageBroker):
         if self.__message_queue is None:
             self.__message_queue = asyncio.Queue()
 
-    async def publish_message(self, message: BaseMessage):
+    async def publish_message(self, message: BaseMessage) -> None:
         self.__initialize_queue()
         await self.__message_queue.put(message)
     
-    async def get_message(self) -> BaseMessage:
+    async def get_message(self) -> Tuple[str, str]:
         self.__initialize_queue()
         return await self.__message_queue.get()
     
@@ -56,11 +58,16 @@ class RedisBroker(MessageBroker):
         self._client = aioredis.from_url(url=url)
         self._pubsub = self._client.pubsub()
     
-    async def publish_message(self, message: BaseMessage):
+    async def publish_message(self, message: BaseMessage) -> None:
         await self._client.publish_message(message.channel, message.json())
     
-    async def get_message(self) -> BaseMessage:
-        return await self._pubsub.get_message()
+    async def get_message(self) -> Tuple[str, str]:
+        redis_message = await self._pubsub.get_message()
+        if redis_message is not None and redis_message['type'] == 'message':
+            return (
+                redis_message['channel'].decode(),
+                redis_message['data'].decode()
+            )
     
     async def subscribe_to_channel(self, channel: str):
         await self._pubsub.subscribe(channel)
@@ -72,10 +79,10 @@ class BrokerGroup(MessageBroker):
     multiple individual brokers to be combined and used in a single Lucette app
     """
     
-    async def publish_message(self, message: BaseMessage):
+    async def publish_message(self, message: BaseMessage) -> None:
         pass
     
-    async def get_message(self) -> BaseMessage:
+    async def get_message(self) -> Tuple[str, str]:
         pass
     
     async def subscribe_to_channel(self, channel: str):

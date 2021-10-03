@@ -24,7 +24,7 @@ class Lucette:
         self.__subscriber_registry = defaultdict(list)
         self.__broker = broker or SimpleBroker()
         
-    async def subscribe(self, func: Callable):
+    def subscribe(self, func: Callable):
         """
         todo: add check to have no more than one channel per message type
         """
@@ -42,7 +42,7 @@ class Lucette:
                 'message parameter or the channel must be given'
             )
         # todo: if type hint given, get the channel if there is one
-        self.__subscriber_registry[param_type].append(func)
+        self.__subscriber_registry[param_type.channel].append((func, param_type))
         
     async def publish(self, msg: BaseMessage):
         await self.__broker.publish_message(msg)
@@ -50,18 +50,13 @@ class Lucette:
     async def run(self):
         if self.__broker is None:
             raise AttributeError('No message broker has been registered')
-        
-        #todo: go through subscribers and register them with the broker
-        await self.__broker.subscribe_to_channel(param_type.channel)
-        
+        for channel in self.__subscriber_registry.keys():
+            await self.__broker.subscribe_to_channel(channel)
         log.info('running with simple broker')
         while True:
             msg = await self.__broker.get_message()
-            handlers = self.__subscriber_registry[type(msg)]
-            for func in handlers:
-                await func(msg)
-            await asyncio.sleep(1)  # add some advanced backoff logic when low traffic
-            print(random.choice(string.ascii_letters))
-
-
-#asyncio.get_event_loop().create_task(__listen_for_events())
+            if msg is not None:
+                handlers = self.__subscriber_registry[msg[0]]
+                for func, msg_type in handlers:
+                    await func(msg_type.parse_raw(msg[1]))
+            await asyncio.sleep(0.05)  # todo: add some advanced backoff logic when low traffic
