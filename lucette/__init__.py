@@ -1,7 +1,5 @@
 import asyncio
 import sys
-import random
-import string
 
 import logbook
 
@@ -59,4 +57,4 @@ class Lucette:
                 handlers = self.__subscriber_registry[msg[0]]
                 for func, msg_type in handlers:
                     await func(msg_type.parse_raw(msg[1]))
-            await asyncio.sleep(0.05)  # todo: add some advanced backoff logic when low traffic
+            await asyncio.sleep(0.001)  # todo: add some advanced backoff logic when low traffic
