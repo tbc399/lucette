@@ -5,7 +5,11 @@ from lucette import Lucette
 from lucette.message import BaseMessage
 
 
-# defaults to SimpleBroker if nothing is provided
+class MyMessage(BaseMessage):
+    _channel = 'my_channel'
+    msg: str
+
+ 
 lucy = Lucette()
 
 
@@ -18,6 +22,6 @@ async def main():
     await lucy.publish()
 
 
-uvloop.install()
-asyncio.run(lucy.run())
-asyncio.
+if __name__ == '__main__':
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    asyncio.run(lucy.run())

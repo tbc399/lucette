@@ -24,5 +24,4 @@ async def receive_input():
 
 if __name__ == '__main__':
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    # defaults to SimpleBroker if nothing is provided
     asyncio.run(receive_input())
