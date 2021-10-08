@@ -14,12 +14,15 @@ class MyMessage(BaseMessage):
 lucy = Lucette(broker=RedisBroker(url='redis://localhost'))
 
 
-@lucy.subscribe
-async def my_handler(message: MyMessage) -> None:
-    print(message.msg)
+async def receive_input():
+    while True:
+        msg = input("message: ")
+        if msg == 'stop':
+            break
+        await lucy.publish(MyMessage(msg=msg))
 
 
 if __name__ == '__main__':
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     # defaults to SimpleBroker if nothing is provided
-    asyncio.run(lucy.run())
+    asyncio.run(receive_input())

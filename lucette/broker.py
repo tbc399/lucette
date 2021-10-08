@@ -59,7 +59,7 @@ class RedisBroker(MessageBroker):
         self._pubsub = self._client.pubsub()
     
     async def publish_message(self, message: BaseMessage) -> None:
-        await self._client.publish_message(message.channel, message.json())
+        await self._client.publish(message.channel, message.json())
     
     async def get_message(self) -> Tuple[str, str]:
         redis_message = await self._pubsub.get_message()
