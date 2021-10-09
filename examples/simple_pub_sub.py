@@ -15,13 +15,13 @@ lucy = Lucette()
 
 @lucy.subscribe
 async def my_handler(message: MyMessage) -> None:
-    pass
+    print(f'received message: "{message.msg}"')
 
 
 async def main():
-    await lucy.publish()
+    await lucy.publish(MyMessage(msg='This is a message'))
 
 
 if __name__ == '__main__':
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    asyncio.run(lucy.run())
+    asyncio.run(asyncio.gather(lucy.run(), main()))
