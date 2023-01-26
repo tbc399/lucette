@@ -7,6 +7,9 @@ from inspect import getfullargspec
 from typing import Callable
 from functools import update_wrapper
 from collections import defaultdict
+#import pigeon
+#import lucette
+#import suzy
 
 from .broker import SimpleBroker, MessageBroker
 from .message import BaseMessage
@@ -17,6 +20,13 @@ log = logbook.Logger('lucette')
 
 
 class Lucette:
+    """Possible name changes:
+
+    - Suzy (Suzy Q. Play on Queue)
+    - Suzyq
+    - Pigeon
+    - Something as a play on event
+    """
 
     def __init__(self, broker=None):
         self.__subscriber_registry = defaultdict(list)
